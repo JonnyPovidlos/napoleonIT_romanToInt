@@ -17,38 +17,57 @@ class Solution:
     result = 0
     explanation = {}
 
-    def get_explanation(self):
-        res = []
+    def get_explanation(self) -> str:
+        """
+
+        :return: Возвращает разложение числа в строке вида 'Римкская цифра(или одинаковые цифры) = Арабское число
+        (или умножение этого числа на количество одинаковых римский цифр)'
+        """
+        expl = []
 
         for roman, count in self.explanation.items():
-            res.append(f'{roman * count} = {count * self.dict_numbers[roman]}')
-        return ', '.join(res)
+            expl.append(f'{roman * count} = {count * self.dict_numbers[roman]}')
+        return ', '.join(expl)
 
-    def get_char_of_roman_and_index(self, s: str):
-        ch = s[0]
+    def get_char_of_roman_and_index(self, s: str) -> tuple[str, int]:
+        """
+
+        :param s: Строка римский цифр, из которой требуется получить арабское число
+        :return: char: Римская цифра, с которой начинается строка(1 или 2 символа),
+        index: количество символов этой Римской цифры
+        """
+        char = s[0]
         index = 1
         if len(s) > 1:
-            ch_tmp = s[0:2]
-            if ch_tmp in self.dict_numbers:
-                ch = ch_tmp
+            char_tmp = s[0:2]
+            if char_tmp in self.dict_numbers:
+                char = char_tmp
                 index = 2
-        return ch, index
+        return char, index
 
     def romanToInt(self, s: str) -> int:
+        """
+
+        :param s: Строка, из которой требуется получить арабское число
+        :return: Арабское число
+        """
+        prev_char = 'M'
         while s:
-            ch, index = self.get_char_of_roman_and_index(s)
-            if not ch in self.dict_numbers:
+            char, index = self.get_char_of_roman_and_index(s)
+            if char not in self.dict_numbers:
+                return False
+            if self.dict_numbers[char] > self.dict_numbers[prev_char]:
                 return False
             s = s[index::]
-            self.result += self.dict_numbers[ch]
-            count = self.explanation.get(ch, 0) + 1
-            self.explanation[ch] = count
+            self.result += self.dict_numbers[char]
+            count = self.explanation.get(char, 0) + 1
+            self.explanation[char] = count
+            prev_char = char
         return self.result
 
 
 solution = Solution()
 roman_numbers = input()
-
 
 res = solution.romanToInt(roman_numbers)
 if res:
